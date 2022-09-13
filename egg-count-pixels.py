@@ -2,7 +2,7 @@
 """
 Mosquito egg counting code using OpenCV pixel-based counts
 
-Updated on Mon Aug 29 13:48:44 2022
+Updated on Mon Sep 12 13:48:44 2022
 
 @author: Nick Tochor
 """
@@ -24,22 +24,27 @@ import glob2 as glob # batch reading images
 import pandas as pd # workikng with matrices and writing to .csv
 import cv2 # image analysis
 
-#set working directory to 'scripts' folder
-os.chdir("C:/Users/ubc/Desktop/Current-Lab-Members/NickTochor/eggcount/eggcount-methods/scripts")
+###############################################################################
+########### Change global variables that are project/user-dependent ###########
+###############################################################################
+trainingFolder = r"../rawdata/training-data/" #folder of images with manual counts to be used for training the pixels/egg value
+imgFolder = r"../rawdata/test-batch-1/" #folder with images for egg counting
+imgFormat = ".png" #image file format, could be '.png', '.jpeg', '.jpg', '.tif', '.tiff'
 
-#set folder with images for training pixel-based detection
-#these will ideally be ones that have been manually counted so that count accuracy can be validated
-trainingFolder = r"../rawdata/training-data/"
+threshold = 50 #threshold for binarizing black and white images (see 'readme.txt for more information)
 
+outFolder = "../outdata/" #folder to write output .csv to
+trainingOutputFileName = "training-data-raw" #file name for training data egg counts
+outputFileType = ".csv" #file type for output data
+outputFile = "test-batch-1" #file name for .csv of count data - best to use project/experiment name
+#Everything below this line is generalized to run without any customization required
+###############################################################################
 #use 'glob()' to extract the file names
-
 #the leading '*" is a string wildcard; it must be present before the file format
-#other formats could be '*.jpeg', '*.jpg', '*.tif', '*.tiff', etc. 
-trainingImageList = glob.glob(trainingFolder+'*.png')
+trainingImageList = glob.glob(trainingFolder + "*" + imgFormat)
 numberTrainingImages = len(trainingImageList)
 
 #make new dictionaries for variables of interest for the trained dataset
-
 trainingFileNames = {}
 trainingNumberContours = {}
 trainingTotalEggPixels = {}
@@ -50,15 +55,15 @@ for i in range(numberTrainingImages):
     #read in image using openCV's 'imread' function
     file = trainingImageList[i]
     image = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
-    #cv2.imwrite("../outdata/test-batch-1/readtest.png", img)
+    #cv2.imwrite("../outdata/test-batch-1/readtest.png", img) #uncomment if troubleshooting image reading
     
     #create binarized image using threshold
     #we used a threshold of 50 (0-255) - see 'thresh-set.py' script for determining thresholds
-    ret,imageBinary=cv2.threshold(image,50,255,cv2.THRESH_BINARY_INV) #threshold set manually based on test images
-    #cv2.imwrite("../outdata/test-batch-1/binarytest.png", imgBinary)
+    ret,imageBinary=cv2.threshold(image, threshold, 255, cv2.THRESH_BINARY_INV) #threshold set manually based on test images
+    #cv2.imwrite("../outdata/test-batch-1/binarytest.png", imgBinary) #uncomment if troubleshooting thresholding
     
     #define contours for distinct shapes present in the binarized image
-    contours, hier=cv2.findContours(imageBinary, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+    contours, hier=cv2.findContours(imageBinary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     
     #summarize count and other info to be written to .csv
     trainingFileNames[i] = os.path.basename(file)[:-4]
@@ -74,7 +79,8 @@ for i in range(numberTrainingImages):
 trainingCountMatrix = pd.DataFrame({'image_name': trainingFileNames, 'num_contours': trainingNumberContours, 'total_egg_pixels': trainingTotalEggPixels, 'pixels_per_egg': trainingPixelsPerEgg})
     
 #write training matrix out as .csv for reference
-trainingCountMatrix.to_csv("../outdata/training-data-raw.csv", index = False)
+#this output can be used to check the accuracy of the counts relative to manual counts
+trainingCountMatrix.to_csv(outFolder + trainingOutputFileName + outputFileType, index = False)
 
 #now we'll select only the images that had mean pixels/egg values +/- 2 standard deviations from the median to eliminate significant outliers
 
@@ -101,14 +107,9 @@ pixelsPerEgg = trainingMatrix['pixels_per_egg'].mean()
 
 #now we can read in new images to count with our trained pixels per egg value
 
-#set folder with images for egg counting 
-imgFolder = r"../rawdata/test-batch-1/"
-
 #use 'glob()' to extract the file names
-
 #the leading '*" is a string wildcard; it must be present before the file format
-#other formats could be '*.jpeg', '*.jpg', '*.tif', '*.tiff', etc. 
-imagesList = glob.glob(imgFolder+'*.png')
+imagesList = glob.glob(imgFolder + "*" + imgFormat)
 numberImages = len(imagesList)
 
 #make new dictionaries for variables of interest - we'll include an optional third column for pixel counts so that the extent of clumping can be approximated
@@ -121,12 +122,10 @@ for i in range(numberImages):
     #read in image using openCV's 'imread' function
     file = imagesList[i]
     image = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
-    #cv2.imwrite("../outdata/test-batch-1/readtest.png", img)
     
     #create binarized image using threshold
     #we used a threshold of 50 (0-255) - see 'thresh-set.py' script for determining thresholds
-    ret,imageBinary=cv2.threshold(image,50,255,cv2.THRESH_BINARY_INV) #threshold set manually based on test images
-    #cv2.imwrite("../outdata/test-batch-1/binarytest.png", imgBinary)
+    ret,imageBinary=cv2.threshold(image, threshold, 255, cv2.THRESH_BINARY_INV) #threshold set manually based on test images
     
     #define contours for distinct shapes present in the binarized image
     contours, hier=cv2.findContours(imageBinary, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
@@ -136,10 +135,13 @@ for i in range(numberImages):
     
     #calculate number of eggs using trained value for pixels/egg
     totalEggPixels = cv2.countNonZero(imageBinary)
-    numberEggs[i] = totalEggPixels / pixelsPerEgg
+    numberEggs[i] = round(totalEggPixels / pixelsPerEgg)
     
 #append lists of data to 'eggCountMatrix' dataframe
 eggCountMatrix = pd.DataFrame({'image_name': fileNames, 'num_eggs': numberEggs})
-    
+
+#define count method for output file name
+countMethod = "pixel-based-counts"
+
 #write out egg count matrix as .csv
-eggCountMatrix.to_csv("../outdata/test-batch-1-pixel-based-counts.csv", index = False)
+eggCountMatrix.to_csv(outFolder + outputFile + "-" + countMethod + outputFileType, index = False)
