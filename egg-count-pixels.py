@@ -21,7 +21,7 @@ Updated on Mon Sep 12 13:48:44 2022
 #read in packages
 import os # directories; path management
 import glob2 as glob # batch reading images
-import pandas as pd # workikng with matrices and writing to .csv
+import pandas as pd # working with matrices and writing to .csv
 import cv2 # image analysis
 
 ###############################################################################
