@@ -7,7 +7,7 @@ This repository accompanies the CSH Protocols chapter Evaluating egg-laying pref
 Image Acquisition: 
 - Raspberry pi (model >= 2, or any version with a CSI port for a camera interface. Note: the raspberry pi 400 does not have a CSI camera port and will not work for this application)
 - Raspberry pi camera (we recommend the Raspberry Pi HQ camera as it is compatible with interchangeable C/CS-mount lenses for easy focus adjustment)
-- > 8GB microSD card for the raspberry pi OS
+- "> 8GB microSD card for the raspberry pi OS"
 - memory stick or external hard drive for file storage/transfer
 - USB keyboard
 - USB mouse
