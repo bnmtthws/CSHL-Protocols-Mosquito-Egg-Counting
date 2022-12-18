@@ -4,7 +4,7 @@ This repository accompanies the CSH Protocols chapter Evaluating egg-laying pref
 
 ## Equipment list:
 
-Image Acquisition: 
+### Image Acquisition: 
 - Raspberry pi (model >= 2, or any version with a CSI port for a camera interface. Note: the raspberry pi 400 does not have a CSI camera port and will not work for this application)
 - Raspberry pi camera (we recommend the Raspberry Pi HQ camera as it is compatible with interchangeable C/CS-mount lenses for easy focus adjustment)
 - microSD card (> 8GB) for the raspberry pi OS
@@ -16,7 +16,7 @@ Image Acquisition:
 - CSI ribbon cable
 - LED tracing panel (> 4x6 in, any size will work as long as it is larger than the egg papers being used in the experiment)
 
-Egg counting: 
+### Egg counting: 
 - Computer with [Anaconda (version >= 3.0)](https://www.anaconda.com/) installed - this remote environment software will be used to set up a Python environment for easy installation of OpenCV
 - Installation of OpenCV (verison >= 4.1) - this can be easily [installed within your Anaconda environment](https://anaconda.org/conda-forge/opencv)
 
