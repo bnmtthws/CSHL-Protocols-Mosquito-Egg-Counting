@@ -49,7 +49,7 @@ print(f'{"output folder"}{sessionID}{"successfully created"}')
 
 input("camera initialized; press enter to start preview")
 
-for replicate in range(1, numberReplicates):
+for replicate in range(1, (numberReplicates + 1)):
 	print(f'{"imaging replicate "}{replicate}{" of "}{numberReplicates}')
 	replicateID = str(f'{"r"}{replicate}')
 	for treatment in treatmentList:
