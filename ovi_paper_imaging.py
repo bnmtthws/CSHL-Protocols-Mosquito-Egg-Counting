@@ -1,6 +1,14 @@
-#this script will be used to capture images using the raspberry pi's picamera modules
-#by default the location of this script will be the working directory
-#and output folders will be placed in the home folder for the storage location of this script
+# -*- coding: utf-8 -*-
+"""
+Mosquito egg counting code using OpenCV polygon counts
+Updated on Sat Dec 24 19:16:44 2022
+@author: Nick Tochor
+"""
+# This script will be used to capture images using the raspberry pi's picamera modules
+# By default, the location of this script will be the working directory
+# and output folders will be placed in the home folder for the storage location of this script
+
+# This code was written in Python 3.9.12
 
 #######################################################
 #read in required packages
