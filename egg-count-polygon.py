@@ -10,7 +10,7 @@ Updated on Mon Sep 12 13:48:44 2022
 # This script will use basic contour detection to automatically count eggs within photos of egg papers
 # Binary thresholds were set based on a particular imaging setup and may need to be adjusted for different imaging setups
 # This simple method of counting eggs is fairly robust to variation in imaging setups, but currently has issues with regions of highly clumped (e.g. overlapping) eggs
-# More complex methods using locally-trained pixel-based egg counting, trained on each image in the dataset will be written and updated
+# If egg papers have a high degree of clumping and this method works poorly, try using the `egg-count-pixel.py' script, which is more robust for counting clustered eggs
 
 ## Directory Structure
 # This code uses relative paths, with a home directory containing three folders: 'rawdata', 'outdata', and 'scripts'
@@ -18,16 +18,16 @@ Updated on Mon Sep 12 13:48:44 2022
 # This code was written in Python 3.9.12 using OpenCV version 4.6.0
 
 #read in packages
-import os # directories; path management
-import glob2 as glob # batch reading images
-import pandas as pd # workikng with matrices and writing to .csv
-import cv2 # image analysis
+import os #directories; path management
+import glob2 as glob #batch reading images
+import pandas as pd #workikng with matrices and writing to .csv
+import cv2 #image analysis
 
 ###############################################################################
-# Change global variables that are project/user-dependent
+#change global variables that are project/user-dependent
 imgFolder = r"../rawdata/test-batch-1/" #set folder with images for egg counting
 
-threshold = 50 #threshold for binarizing black and white images (see 'readme.txt for more information)
+threshold = 50 #threshold for binarizing black and white images (see readme.md and `set-threshold.py` for more information)
 
 outFolder = "../outdata/" #folder to write output .csv to
 outputFile = "test-batch-1" #file name for .csv of count data - best to use project/experiment name
@@ -77,5 +77,5 @@ eggCountMatrix = pd.DataFrame({'image_name': fileNames, 'num_eggs': numberEggs, 
 countMethod = "contour-based-counts"
 outputFileType = ".csv"
 
-#write out as .csv
+#write out count data as .csv
 eggCountMatrix.to_csv(outFolder + outputFile + "-" + countMethod + outputFileType, index = False)
