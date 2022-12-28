@@ -4,7 +4,7 @@ Setting a threshold for binarizing images of moquito eggs for automated counting
 
 Created on Sat Dec 17 10:56:02 2022
 
-@author: Nick
+@author: Nick Tochor
 """
 
 #This script will be used to determine an optimal threshold for binarizing 
@@ -52,5 +52,9 @@ thresholdImage = str(f'{outFolder}{experimentName}{"_"}{thresholdOutputFileName}
 
 #read in image using openCV's 'imread' function
 image = cv2.imread(rawImage, cv2.IMREAD_GRAYSCALE) #the image is converted to black and white
+
+#binarize the image using the previously defined threshold
 ret,imageBinary=cv2.threshold(image,threshold, 255, cv2.THRESH_BINARY_INV) #inverts the image and binarizes it based on user-defined threshold
+
+#write binarized image for manual reviewing binarization quality
 cv2.imwrite(thresholdImage, imageBinary)
